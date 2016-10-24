@@ -1,6 +1,6 @@
 Address Book
 
-Installation
+INSTALLATION
 
 	The Address Book API can be installed executing the following commands:
 
@@ -8,7 +8,7 @@ Installation
 		pip install .
 
 
-Usage
+USAGE
 
 	Once installed the API can be used by just importing it:
 
@@ -38,26 +38,26 @@ Usage
     	# Find list of person by lastname only
     	b = ab.findPerson("Mario", None)
     	if b is not None:
-        	for t in b:
-            	t.toStr()
+	 	for t in b:
+			t.toStr()
 
-		# Given a group we want to easily find its members
-		for g in ab.getGroupMembers("Alfa"):
-    		print("P: " + g.getFullName())
+	# Given a group we want to easily find its members
+	for g in ab.getGroupMembers("Alfa"):
+		print("P: " + g.getFullName())
 
-		# Given a person we want to easily find the groups the person belongs to.
-		print("G: " + str(ab.getPersonGroup(p)))   
+	# Given a person we want to easily find the groups the person belongs to.
+	print("G: " + str(ab.getPersonGroup(p)))   
 
-		# Find person by email address, supplying either the exact 
-		# string or a prefix string, ie. both "alexander@company.com" 
-		# and "alex" should work).
-		d = ab.findPersonByEmail("luigi.riefolo@gmail.com")
-		if d is not None:
-    		for p in d:
-        		p.toStr()
+	# Find person by email address, supplying either the exact 
+	# string or a prefix string, ie. both "alexander@company.com" 
+	# and "alex" should work).
+	d = ab.findPersonByEmail("luigi.riefolo@gmail.com")
+	if d is not None:
+		for p in d:
+			p.toStr()
 
  
-Testing
+TESTING
 
 	All API calls are unit-tested, to run the unit-tests:
 
@@ -65,9 +65,9 @@ Testing
 		python test_address_book.py 
 
 
-Design
+DESIGN
 
-	How would you find a person	by their email address, supplying any substring, 
+	How would you find a person by their email address, supplying any substring, 
 	ie. "comp" should find "alexander@company.com":
 
 	- Using a regex we can find any email address that matches the pattern
@@ -79,12 +79,12 @@ Design
 	Using the above we can store all combinations of emails and retrieve the list of persons more efficiently.
 
 
-Author
+AUTHOR
 
 	Luigi Riefolo <luigi.riefolo@gmail.com>
 
 
-License
+LICENSE
 
 	This project does not require any license and it's free to use.
 
