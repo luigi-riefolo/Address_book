@@ -2,6 +2,8 @@
 
 import re
 import sys
+import addressbook
+import logging
 
 class AddressBook:
     """
@@ -14,11 +16,11 @@ class AddressBook:
     """
 
     def __init__(self):
+        logging.info("New address book created")
         self.numbers = dict()
         self.persons = dict()
         self.groups = dict()
         self.emails = dict()
-        self.personNo = 0
 
     # Add a person to the address book
     # NOTE:
@@ -28,46 +30,86 @@ class AddressBook:
     # and lastname cannot have the same 
     # phone number
     def addPerson(self, person):
-        k = person.getLastname() + "_" + person.getName()
-        if k not in self.persons:
-            self.persons[k] = []
-        self.persons[k].append(person)
+        fullName = person.getFullNameCode()
+        if fullName not in self.persons:
+            self.persons[fullName] = []
+ 
+        logging.info("Adding new person: %s" % (person.getFullName()))
 
-        for n in person.getPhone():
-            self.numbers[n] = person
+        self.persons[fullName].append(person)
 
-        for e in person.getEmail():
-            self.emails[e] = person
+        for num in person.getPhone():
+            self.numbers[num] = person
 
-        for g in person.getGroups():
-            if g in self.groups:
-                self.groups[g].append(person)
-        self.personNo += 1
+        for email in person.getEmail():
+            self.emails[email] = person
+
+        for group in person.getGroups():
+            if group in self.groups:
+                self.groups[group].append(person)
+
+
+    # Reports whether a group is in the address book
+    def groupExists(self, group):
+        print("GROUP: " + group)
+        if group in self.groups:
+            return True
+
+        return False
 
 
     # Add a group to the address book
     def addGroup(self, group):
-        self.groups[group] = []
+        logging.info("Adding group '%s'" % (group))
+        if self.groupExists(group):
+            logging.info("Group '%s' already exists" % (group))
+        else:
+            self.groups[group] = []
+
 
     # Get a group's list of members
     def getGroupMembers(self, group):
-        return self.groups[group]
-    
+        logging.info("Getting group members for '%s'" % (group))
+        if self.groupExists(group):
+            return self.groups[group]
+        else:
+            logging.warning("Group '%s' does not exist" % (group))
+            return None
+
+
+    # Reports whether a person is in the address book
+    def personExists(self, fullName):
+        if fullName in self.persons:
+            return True
+        else:
+            return False
+
+
     # Get person's list of groups
     def getPersonGroup(self, person):
-        k = person.getLastname() + "_" + person.getName()
-        ret = dict()
-        for p in self.persons[k]:
-            ret[p.getFullName()] = p.getGroups()
-        return ret
-    
-    # Find person by name, supplying either 
-    # first name, last name, or both
+        fullName = person.getFullNameCode()
+        if not self.personExists(fullName):
+            return None
+
+        groups = dict()
+        for person in self.persons[fullName]:
+            groups[person.getFullName()] = person.getGroups()
+        return groups
+
+
+    def getFullNameCode(self, lastname, name):
+        return lastname + "_" + name
+
+
+    # Find a list of persons by name, supplying 
+    # either first name, last name, or both
     def findPerson(self, lastname, name):
-        p = None
+        persons = None
+
         if name != None and lastname != None:
-            k = lastname + "_" + name
-            p = self.persons[k] 
+            fullName = self.getFullNameCode(lastname, name)
+            if self.personExists(fullName):
+                persons = self.persons[fullName] 
 
         elif name != None or lastname != None:
             reg = None
@@ -77,14 +119,14 @@ class AddressBook:
             if name == None and lastname != None:
                 reg = re.compile(r'%s_' % (lastname))
             
-            for k, v in self.persons.iteritems():
-                if re.match(reg, k):
-                    p = v
+            for fullName, personList in self.persons.iteritems():
+                if re.match(reg, fullName):
+                    persons = personList
  
-        if p == None:    
-            print("Could not find requested person")
+        if persons == None:    
+            logging.warning("Could not find requested person")
 
-        return p
+        return persons
      
    
     # Find person by email address, supplying either 
@@ -98,32 +140,27 @@ class AddressBook:
         else:
             emailRe = re.compile(r'%s.*@.+\.-{2,5}' % (email))
 
-        p = None
-        for k, v in self.persons.iteritems():
-            for p in v:
-                for e in p.getEmail():
-                    if re.match(emailRe, e):
-                        p = v
-        return p
+        for fullName, persons in self.persons.iteritems():
+            for person in persons:
+                for email in person.getEmail():
+                    if re.match(emailRe, email):
+                        return person
 
-    sep = "------------------------------------"
+        return None
+
     
     def personsToStr(self):
-        print("Persons in address book (%s):" % self.personNo)
-        for k, v in self.persons.iteritems():
-            for p in self.persons[k]:
-                p.toStr()
-                print(self.sep)
+        persons = []
+        for fullName, personObj in self.persons.iteritems():
+            for person in self.persons[fullName]:
+                persons.append(person.toStr())
+
+        return persons
+
 
     def groupsToStr(self):
-        print("Groups in address book (%s)" % (len(self.groups)))
-        for k, v in self.groups.iteritems():
-            sys.stdout.write("%s:\t\t" % (k))
-            if not len(v):
-                print("\tEmpty")
-            pad = ""
-            for p in v:
-                print("\t%s%s" % (pad, p.getFullName()))
-                pad = "\t\t"
-            print(self.sep)
+        groups = []
+        for group, members in self.groups.iteritems():
+            groups.append(group)
 
+        return groups

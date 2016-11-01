@@ -2,6 +2,7 @@
 
 import sys
 
+
 class Person:
     """
     A person class
@@ -45,6 +46,9 @@ class Person:
     def getFullName(self):
         return self.lastname + " " + self.name
 
+    def getFullNameCode(self):
+        return self.lastname + "_" + self.name
+
     def getAddress(self):
         return self.address
 
@@ -58,29 +62,35 @@ class Person:
         return self.groups
 
     def toStr(self):
-        print("Lastname:\t\t%s\nName:\t\t\t%s" % 
-            (self.lastname, self.name))
-        sys.stdout.write("Address:")
-        pad = ""
-        for a in self.address:
-            print("\t\t%s%s" % (pad, a))
-            pad = "\t"
+        person = (
+            "lastname: {0}, "
+            "name: {1}, "
+            "address: {2}, "
+            "email: {3}, "
+            "phone: {4}, "
+            "group: {5}"
+        ).format(self.lastname, self.name, self.address, self.email, self.phone, self.groups)
 
-        sys.stdout.write("Email:")
-        for a in self.email:
-            print("\t\t\t%s" % (a))
-        pad = ""
+        return person
 
-        sys.stdout.write("Phone:\t")
-        for a in self.phone:
-            print("\t\t%s%s" % (pad, a))
-            pad = "\t"
-        pad = ""
 
-        sys.stdout.write("Groups:\t")
-        if not len(self.groups):
-            print("\t\tNone")
-        for a in self.groups:
-            print("\t\t%s%s" % (pad, a))
-            pad = "\t"
+    def toFmtStr(self):
+        person = "Lastname:\t\t{0}\nName:\t\t\t{1}\n".format(self.lastname, self.name)
+        person += "Address:\t\t"
+        person += str.join(", ", self.address)
+        person += "\n"
+
+        person += "Email:\t\t\t"
+        person += str.join(", ", self.email)
+        person += "\n"
+
+        person += "Phone:\t\t\t"
+        person += str.join(", ", self.phone)
+        person += "\n"
+
+        person += "Groups:\t\t\t"
+        person += str.join(", ", self.groups)
+        person += "\n"
+
+        return person
 
