@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
-import sys
+"""
+A person class.
+"""
 
 
-class Person:
+class Person(object):
+
     """
-    A person class
-    
+    A person representation.
+
     Attributes:
         name: A string representing a Person's name
         lastname: A string representing a Person's lastname
@@ -15,53 +18,64 @@ class Person:
         phone: An array of strings representing one or more phone numbers
         groups: An array of strings representing one or more Person's groups
     """
-    def __init__(self, name, lastname, address, email, phone, groups):
-        self.name = name
-        self.lastname = lastname
+
+    def __init__(self, args):
+        self.lastname = args["lastname"]
+        self.name = args["name"]
+        self.address = args["address"]
+        self.email = args["email"]
+        self.phone = args["phone"]
+        self.groups = args["groups"]
+
+    def set_address(self, address):
+        """ Set a list of addresses """
         self.address = address
+
+    def set_email(self, email):
+        """ Set a list of emails """
         self.email = email
+
+    def set_phone(self, phone):
+        """ Set a list of phone numbers """
         self.phone = phone
+
+    def set_groups(self, groups):
+        """ Set a list of groups """
         self.groups = groups
 
-    # Setters
-    def setAddress(self, address):
-        self.address = address
-
-    def setEmail(self, email):
-        self.email = email
-
-    def setPhone(self, phone):
-        self.phone = phone
-
-    def setGroups(self, groups):
-        self.groups = groups
-
-    # Getters 
-    def getName(self):
+    def get_name(self):
+        """ Get person's name """
         return self.name
-    
-    def getLastname(self):
+
+    def get_lastname(self):
+        """ Get person's lastname """
         return self.lastname
 
-    def getFullName(self):
+    def get_full_name(self):
+        """ Get person's fullname """
         return self.lastname + " " + self.name
 
-    def getFullNameCode(self):
+    def get_full_name_code(self):
+        """ Get person's fullname code """
         return self.lastname + "_" + self.name
 
-    def getAddress(self):
+    def get_address(self):
+        """ Get person's address list """
         return self.address
 
-    def getEmail(self):
+    def get_email(self):
+        """ Get person's emails list """
         return self.email
 
-    def getPhone(self):
+    def get_phone(self):
+        """ Get person's phone numbers list """
         return self.phone
 
-    def getGroups(self):
+    def get_groups(self):
+        """ Get person's groups list """
         return self.groups
 
-    def toStr(self):
+    def __str__(self):
         person = (
             "lastname: {0}, "
             "name: {1}, "
@@ -69,13 +83,20 @@ class Person:
             "email: {3}, "
             "phone: {4}, "
             "group: {5}"
-        ).format(self.lastname, self.name, self.address, self.email, self.phone, self.groups)
+        ).format(
+            self.lastname,
+            self.name,
+            self.address,
+            self.email,
+            self.phone,
+            self.groups)
 
         return person
 
-
-    def toFmtStr(self):
-        person = "Lastname:\t\t{0}\nName:\t\t\t{1}\n".format(self.lastname, self.name)
+    def get_fmt_str(self):
+        """ Create a person formatted string representation """
+        person = "Lastname:\t\t{0}\n".format(self.lastname)
+        person += "Name:\t\t\t{0}\n".format(self.name)
         person += "Address:\t\t"
         person += str.join(", ", self.address)
         person += "\n"
@@ -93,4 +114,3 @@ class Person:
         person += "\n"
 
         return person
-
