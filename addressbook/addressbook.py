@@ -4,6 +4,7 @@
 Adddress book API.
 """
 
+from __future__ import print_function
 
 import re
 import logging
@@ -14,9 +15,9 @@ class AddressBook(object):
     An address book class.
 
     Attributes:
-        persons: A dict containing a collection of persons
-        groups: A dict containing a collection of groups
-        emails: A dict containing a collection of persons' email addresses
+        @param persons: Dict containing a collection of persons.
+        @param groups: Dict containing a collection of groups
+        @param emails: Dict containing a collection of email addresses.
     """
     def __init__(self):
         logging.info("New address book created")
@@ -28,6 +29,8 @@ class AddressBook(object):
     def add_person(self, person):
         """
         Add a person to the address book.
+
+        @param person: Person object to add.
 
         The person's phone numbers are
         used as keys in the address book, as
@@ -54,14 +57,23 @@ class AddressBook(object):
                 self.groups[group].append(person)
 
     def group_exists(self, group):
-        """ Reports whether a group is in the address book. """
+        """
+        Reports whether a group is in the address book.
+
+        @param group: The group to check.
+        @return: Boolean.
+        """
         if group in self.groups:
             return True
 
         return False
 
     def add_group(self, group):
-        """ Add a group to the address book. """
+        """
+        Add a group to the address book.
+
+        @param group: The group string to be added.
+        """
         logging.info("Adding group '%s'", group)
         if self.group_exists(group):
             logging.info("Group '%s' already exists", group)
@@ -69,7 +81,12 @@ class AddressBook(object):
             self.groups[group] = []
 
     def get_group_members(self, group):
-        """ Get a group's list of members. """
+        """
+        Get a group's list of members.
+
+        @param group: Requested group.
+        @return: List containing group members.
+        """
         logging.info("Getting group members for '%s'", group)
         if self.group_exists(group):
             return self.groups[group]
@@ -78,11 +95,21 @@ class AddressBook(object):
             return None
 
     def person_exists(self, full_name):
-        """ Reports whether a person is in the address book. """
+        """
+        Reports whether a person is in the address book.
+
+        @param full_name: Person's fullname.
+        @return: Boolean
+        """
         return bool(full_name in self.persons)
 
     def get_person_group(self, person):
-        """ Get person's list of groups. """
+        """
+        Get person's list of groups.
+
+        @param person: Requested person.
+        @return: A list of groups or an empty dict.
+        """
         full_name = person.get_full_name_code()
         if not self.person_exists(full_name):
             return None
@@ -94,12 +121,23 @@ class AddressBook(object):
 
     @staticmethod
     def get_full_name_code(lastname, name):
-        """ Return a fullname code. """
+        """
+        Return a fullname code.
+
+        @param lastname: Person's lastname.
+        @param name: Person's name.
+        @return: A string containing a fullname code.
+        """
         return lastname + "_" + name
 
-    def find_person(self, lastname, name):
+    def find_person(self, lastname=None, name=None):
         """
         Find a list of persons by name.
+
+        @param lastname: Person's lastname.
+        @param name: Person's name.
+
+        @return: A list of person objects or None.
 
         Supplying either first name, last name, or both.
         """
@@ -124,12 +162,17 @@ class AddressBook(object):
 
         if persons is None:
             logging.warning("Could not find requested person")
+        else:
+            logging.info("Requested person found")
 
         return persons
 
     def find_person_by_email(self, email):
         """
         Find person by email address.
+
+        @param email: Person's email.
+        @return: A person object or None.
 
         Supplying either the exact string or a prefix string,
         ie. both "alexander@company.com" and "alex" are valid patterns.
@@ -139,29 +182,42 @@ class AddressBook(object):
         if re.match(email_re, email):
             full_email_re = re.compile(email)
         else:
-            full_email_re = re.compile(r'%s.*@.+\.-{2,5}' % (email))
+            full_email_re = re.compile(r'.*%s.*@.+\..{2,5}' % (email))
 
-        for _, persons in self.persons.iteritems():
-            for person in persons:
-                for email in person.get_email():
-                    if re.match(full_email_re, email):
-                        return person
+        print("FIND: " + email)
+        for email, person in self.emails.iteritems():
+            print("EMAIL: " + email)
+            if re.match(full_email_re, email):
+                logging.info("Requested person found")
+                return person
+
+        logging.warning("Could not find requested person")
 
         return None
 
-    def persons_to_str(self):
-        """ Return a person's string representation. """
+    def get_persons_str(self):
+        """
+        Return a person's string representation.
+
+        @return: A string representation of a person object.
+        """
         persons = ""
         for full_name, _ in self.persons.iteritems():
             for person in self.persons[full_name]:
-                persons += str(person)
+                persons += person.get_fmt_str()
+                persons += '-' * 20 + "\n"
 
         return persons
 
-    def groups_to_str(self):
-        """ Return a group's string representation. """
+    def get_groups_str(self):
+        """
+        Return a group's string representation.
+
+        @return: A string representation of a group object.
+        """
         groups = ""
         for group, _ in self.groups.iteritems():
             groups += str(group)
+            groups += '\n' + '-' * 20 + "\n"
 
         return groups
