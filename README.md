@@ -84,7 +84,7 @@ TESTING
 
 	All API calls are unit-tested, to run the unit-tests:
 
-		cd addressbook/addressbook/tests/
+		cd addressbook/tests/
 		python test_address_book.py
 
 
